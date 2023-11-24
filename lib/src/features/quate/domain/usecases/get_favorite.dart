@@ -7,7 +7,7 @@ class GetFavoriteQuatesUsecase {
   final QuateRepository quateRepository;
 
   GetFavoriteQuatesUsecase({required this.quateRepository});
-  Future<Either<Failure, List<Quate>>> call(String keyWord) async {
+  Future<Either<Failure, List<Quate>>> call() async {
     return quateRepository.getFavoriteQuates();
   }
 }
