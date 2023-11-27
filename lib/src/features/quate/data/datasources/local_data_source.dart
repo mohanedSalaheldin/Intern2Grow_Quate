@@ -46,7 +46,7 @@ class LocalDataSourseImpl implements LocalDataSource {
           .toList();
       return Future.value(models);
     } else {
-      throw NoFavoriteException();
+      return [];
     }
   }
 

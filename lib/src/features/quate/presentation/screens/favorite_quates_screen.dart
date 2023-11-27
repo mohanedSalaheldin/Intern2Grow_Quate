@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:quate_app/src/core/utils/app_colors.dart';
+import 'package:quate_app/src/core/widgets/error_widget.dart';
+import 'package:quate_app/src/core/widgets/loading_wodget.dart';
+import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_cubit.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_state.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/bordered_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/navigation_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/quate_card.dart';
 
 class FavoriteQuatesScreen extends StatelessWidget {
-  const FavoriteQuatesScreen({super.key});
-
+  FavoriteQuatesScreen({super.key});
+  List<Quate>? favoriteQuates;
   @override
   Widget build(BuildContext context) {
+    QuatesCubit.get(context).getFavoriteQuates();
+
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -21,7 +29,26 @@ class FavoriteQuatesScreen extends StatelessWidget {
               end: Alignment.bottomLeft,
             ),
           ),
-          child: const BodyWidget(),
+          child: BlocConsumer<QuatesCubit, QuatesState>(
+            listener: (context, state) {
+              if (state is GetFavoriteQuatesSuccessState) {
+                favoriteQuates = state.favoriteQuates;
+              }
+            },
+            builder: (context, state) {
+              if (state is GetFavoriteQuatesErrorState) {
+                return MyErrorWidget(error: state.msg);
+              } else if (state is GetFavoriteQuatesLoadingState) {
+                return const LoadingWidget();
+              } else if (favoriteQuates != null) {
+                return BodyWidget(
+                  favoriteQuates: favoriteQuates!,
+                );
+              } else {
+                return const LoadingWidget();
+              }
+            },
+          ),
         ),
       ),
     );
@@ -29,8 +56,10 @@ class FavoriteQuatesScreen extends StatelessWidget {
 }
 
 class BodyWidget extends StatelessWidget {
+  final List<Quate> favoriteQuates;
   const BodyWidget({
     super.key,
+    required this.favoriteQuates,
   });
 
   @override
@@ -94,11 +123,12 @@ class BodyWidget extends StatelessWidget {
             child: ListView.separated(
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) => bulidQuateCard(context),
+              itemBuilder: (context, index) =>
+                  bulidQuateCard(context, favoriteQuates[index]),
               separatorBuilder: (context, index) => const SizedBox(
                 height: 10.0,
               ),
-              itemCount: 2,
+              itemCount: favoriteQuates.length,
             ),
           ),
           // bulidQuateCard(context),
@@ -107,14 +137,15 @@ class BodyWidget extends StatelessWidget {
     );
   }
 
-  QuateCard bulidQuateCard(BuildContext context) {
+  QuateCard bulidQuateCard(BuildContext context, Quate quate) {
     return QuateCard(
       fullyRounded: true,
-      quateContent:
-          '“All I required to be happy was friendship and people I could admire.”',
-      quateAuther: 'Christian Dior',
+      quateContent: quate.content,
+      quateAuther: quate.author,
       child: MyBorderedButton(
-        onPressed: () {},
+        onPressed: () {
+          QuatesCubit.get(context).removeQuateFromfavorite(quate.id);
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -6,6 +6,7 @@ class QuateCard extends StatelessWidget {
   final String quateContent;
   final String quateAuther;
   final bool? fullyRounded;
+  
 
   const QuateCard({
     super.key,

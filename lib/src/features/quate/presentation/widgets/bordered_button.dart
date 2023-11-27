@@ -4,12 +4,14 @@ import 'package:quate_app/src/core/utils/app_colors.dart';
 class MyBorderedButton extends StatelessWidget {
   final Widget child;
   final Function() onPressed;
+  final bool? inFavorite;
   final bool? fullyRounded;
   const MyBorderedButton({
     super.key,
     required this.child,
     required this.onPressed,
     this.fullyRounded = false,
+    this.inFavorite,
   });
   BorderRadius _choseBorderStyle(bool fullyRounded) {
     if (!fullyRounded) {
@@ -38,7 +40,7 @@ class MyBorderedButton extends StatelessWidget {
       ),
       child: MaterialButton(
         // height: 70.0,
-        onPressed: () {},
+        onPressed: onPressed,
         child: child,
       ),
     );

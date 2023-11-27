@@ -1,27 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:quate_app/src/core/utils/app_colors.dart';
+import 'package:quate_app/src/core/widgets/error_widget.dart';
+import 'package:quate_app/src/core/widgets/loading_wodget.dart';
+import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_cubit.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_state.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/bordered_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/navigation_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/quate_card.dart';
 
 class SearchResultScreen extends StatelessWidget {
-  const SearchResultScreen({super.key});
+  SearchResultScreen({super.key});
+  List<Quate>? searchQuates;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: SafeArea(
-        child: BodyWidget(),
+        child:
+            BlocConsumer<QuatesCubit, QuatesState>(listener: (context, state) {
+          if (state is SearchQuatesSuccessState) {}
+        }, builder: (context, state) {
+          if (state is SearchQuatesErrorState) {
+            return MyErrorWidget(error: state.msg);
+          } else if (state is SearchQuatesLoadingState) {
+            return const LoadingWidget();
+          } else if (searchQuates != null) {
+            return BodyWidget(
+              searchQuates: searchQuates!,
+            );
+          } else {
+            return const LoadingWidget();
+          }
+        }),
       ),
     );
   }
 }
 
 class BodyWidget extends StatelessWidget {
-  const BodyWidget({
-    super.key,
-  });
+   BodyWidget({super.key, required this.searchQuates});
+  final List<Quate> searchQuates;
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +120,12 @@ class BodyWidget extends StatelessWidget {
               child: ListView.separated(
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) => bulidQuateCard(context),
+                itemBuilder: (context, index) =>
+                    bulidQuateCard(context, searchQuates[index]),
                 separatorBuilder: (context, index) => const SizedBox(
                   height: 10.0,
                 ),
-                itemCount: 2,
+                itemCount: searchQuates.length,
               ),
             ),
             // bulidQuateCard(context),
@@ -113,14 +135,15 @@ class BodyWidget extends StatelessWidget {
     );
   }
 
-  QuateCard bulidQuateCard(BuildContext context) {
+  QuateCard bulidQuateCard(BuildContext context, Quate quate) {
     return QuateCard(
       fullyRounded: true,
-      quateContent:
-          '“All I required to be happy was friendship and people I could admire.”',
-      quateAuther: 'Christian Dior',
+      quateContent: quate.content,
+      quateAuther: quate.author,
       child: MyBorderedButton(
-        onPressed: () {},
+        onPressed: () {
+          QuatesCubit.get(context).addQuateTofavorite(quate);
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

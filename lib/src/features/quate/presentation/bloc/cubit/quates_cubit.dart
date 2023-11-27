@@ -61,6 +61,8 @@ class QuatesCubit extends Cubit<QuatesState> {
     );
   }
 
+  List<Quate> favoriteQuatesList = [];
+  List<Quate> searchQuatesList = [];
   Future<void> getFavoriteQuates() async {
     emit(GetFavoriteQuatesLoadingState());
     final Either<Failure, List<Quate>> response =

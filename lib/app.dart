@@ -11,12 +11,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<QuatesCubit>(
-      create: (context) => di.sl<QuatesCubit>(),
+      create: (context) => di.sl<QuatesCubit>()
+        ..getRandomQuate()
+        ..getFavoriteQuates(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: AppThemes.appDefaultTheme,
         title: 'Quates',
-        home: const HomeScreen(),
+        home: HomeScreen(),
       ),
     );
   }
