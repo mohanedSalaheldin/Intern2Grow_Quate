@@ -14,10 +14,14 @@ abstract class LocalDataSource {
 class LocalDataSourseImpl implements LocalDataSource {
   final String cachedQuates = 'CACHED_QUATES';
   static List<QuateModel> favoriteQuates = [];
+  final SharedPreferences sharedPreferences;
+
+  LocalDataSourseImpl({required this.sharedPreferences});
   @override
   Future<Unit> addQuateToFavorite(QuateModel quate) async {
-    favoriteQuates.add(quate);
-    saveListInCache(favoriteQuates);
+    List<QuateModel> temp = await getFavoriteQuates();
+    temp.add(quate);
+    saveListInCache(temp);
     return Future.value(unit);
   }
 
@@ -37,7 +41,6 @@ class LocalDataSourseImpl implements LocalDataSource {
 
   @override
   Future<List<QuateModel>> getFavoriteQuates() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     final String? jsonString = sharedPreferences.getString(cachedQuates);
     if (jsonString != null) {
       List decodeJsonData = json.decode(jsonString);
@@ -46,13 +49,13 @@ class LocalDataSourseImpl implements LocalDataSource {
           .toList();
       return Future.value(models);
     } else {
-      return [];
+      throw NoFavoriteException();
+      // return [];
     }
   }
 
-  void saveListInCache(List favoriteQuates) async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    List modelsToJson = favoriteQuates
+  void saveListInCache(List<QuateModel> quates) async {
+    List modelsToJson = quates
         .map<Map<String, dynamic>>((quateModel) => quateModel.toJson())
         .toList();
     sharedPreferences.setString(cachedQuates, json.encode(modelsToJson));

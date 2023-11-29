@@ -46,3 +46,65 @@ class MyBorderedButton extends StatelessWidget {
     );
   }
 }
+
+Widget favButton({required onPressed,
+    required inFavorite,}) {
+      return Container(
+      height: 50.0,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        border: Border.all(
+          width: 2,
+          color: AppColors.defaultColor,
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomRight: Radius.circular(7.0),
+        ),
+      ),
+      child: MaterialButton(
+        // height: 70.0,
+        onPressed: onPressed,
+        child: Icon(
+          inFavorite ? Icons.favorite_border_outlined : Icons.favorite,
+          color: AppColors.defaultColor,
+          size: 30.0,
+        ),
+      ),
+    );
+    }
+
+// class FavButton extends StatelessWidget {
+//   final Function() onPressed;
+//   final bool inFavorite;
+//   const FavButton({
+//     super.key,
+//     required this.onPressed,
+//     required this.inFavorite,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 50.0,
+//       decoration: BoxDecoration(
+//         color: AppColors.white,
+//         border: Border.all(
+//           width: 2,
+//           color: AppColors.defaultColor,
+//         ),
+//         borderRadius: const BorderRadius.only(
+//           bottomRight: Radius.circular(7.0),
+//         ),
+//       ),
+//       child: MaterialButton(
+//         // height: 70.0,
+//         onPressed: onPressed,
+//         child: Icon(
+//           inFavorite ? Icons.favorite_border_outlined : Icons.favorite,
+//           color: AppColors.defaultColor,
+//           size: 30.0,
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -35,16 +35,12 @@ class QuateRepositoryImpl implements QuateRepository {
 
   @override
   Future<Either<Failure, List<Quate>>> getFavoriteQuates() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final List<Quate> favoriteQuates =
-            await localDataSource.getFavoriteQuates();
-        return Right(favoriteQuates);
-      } on NoFavoriteException {
-        return Left(NoFavoriteFailure());
-      }
-    } else {
-      return Left(OfflineFailure());
+    try {
+      final List<Quate> favoriteQuates =
+          await localDataSource.getFavoriteQuates();
+      return Right(favoriteQuates);
+    } on NoFavoriteException {
+      return Left(NoFavoriteFailure());
     }
   }
 

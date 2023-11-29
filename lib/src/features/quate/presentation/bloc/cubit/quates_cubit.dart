@@ -8,23 +8,17 @@ import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
 import 'package:quate_app/src/features/quate/domain/usecases/add_quate_to_favorite.dart';
 import 'package:quate_app/src/features/quate/domain/usecases/get_favorite.dart';
 import 'package:quate_app/src/features/quate/domain/usecases/get_random_quate.dart';
-import 'package:quate_app/src/features/quate/domain/usecases/remove_quate_from_favorite.dart';
-import 'package:quate_app/src/features/quate/domain/usecases/search_quate.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_state.dart';
 
 class QuatesCubit extends Cubit<QuatesState> {
   AddQuateToFavoritesUsecase addQuateToFavoritesUsecase;
-  RemoveQuateFromFavoritesUsecase removeQuateFromFavoritesUsecase;
   GetFavoriteQuatesUsecase getFavoriteQuatesUsecase;
   GetRandomQuateUsecase getRandomQuateUsecase;
-  SearchQuateUsecase searchQuateUsecase;
 
   QuatesCubit({
     required this.addQuateToFavoritesUsecase,
-    required this.removeQuateFromFavoritesUsecase,
     required this.getFavoriteQuatesUsecase,
     required this.getRandomQuateUsecase,
-    required this.searchQuateUsecase,
   }) : super(QuatesInitial());
 
   static QuatesCubit get(context) => BlocProvider.of(context);
@@ -43,26 +37,10 @@ class QuatesCubit extends Cubit<QuatesState> {
             msg: SuccessMessages.addToFavoriteSuccessMessage)),
       },
     );
+    await getFavoriteQuates();
   }
 
-  Future<void> removeQuateFromfavorite(String quateID) async {
-    emit(RemoveQuateFromFavoritesLoadingState());
-    final Either<Failure, Unit> response =
-        await removeQuateFromFavoritesUsecase(quateID);
-    response.fold(
-      (failure) => {
-        emit(RemoveQuateFromFavoritesErrorState(
-            msg: ErrorMessages.removeFromFavoriteErrorMessage)),
-      },
-      (_) => {
-        emit(RemoveQuateFromFavoritesSuccessState(
-            msg: SuccessMessages.removeFromFavoriteSuccessMessage)),
-      },
-    );
-  }
-
-  List<Quate> favoriteQuatesList = [];
-  List<Quate> searchQuatesList = [];
+  int favoriteQuatesListLinght = 0;
   Future<void> getFavoriteQuates() async {
     emit(GetFavoriteQuatesLoadingState());
     final Either<Failure, List<Quate>> response =
@@ -73,26 +51,14 @@ class QuatesCubit extends Cubit<QuatesState> {
             msg: ErrorMessages.getFavoriteErrorMessage)),
       },
       (quates) => {
+        favoriteQuatesListLinght = quates.length,
         emit(GetFavoriteQuatesSuccessState(favoriteQuates: quates)),
       },
     );
   }
 
-  Future<void> searchQuates(String keyWord) async {
-    emit(SearchQuatesLoadingState());
-    final Either<Failure, List<Quate>> response =
-        await searchQuateUsecase(keyWord);
-    response.fold(
-      (failure) => {
-        emit(
-            SearchQuatesErrorState(msg: ErrorMessages.searchQuateErrorMessage)),
-      },
-      (quates) => {
-        emit(SearchQuatesSuccessState(quates: quates)),
-      },
-    );
-  }
-
+  Quate randomQuate =
+      const Quate(id: '', content: '', author: '');
   Future<void> getRandomQuate() async {
     emit(GetRandomQuateLoadingState());
     final Either<Failure, Quate> response = await getRandomQuateUsecase();
@@ -102,6 +68,7 @@ class QuatesCubit extends Cubit<QuatesState> {
             msg: ErrorMessages.getRandomQuateErrorMessage)),
       },
       (quate) => {
+        randomQuate = quate,
         emit(GetRandomQuateSuccessState(quate: quate)),
       },
     );

@@ -11,6 +11,8 @@ import 'package:quate_app/src/features/quate/domain/usecases/get_random_quate.da
 import 'package:quate_app/src/features/quate/domain/usecases/remove_quate_from_favorite.dart';
 import 'package:quate_app/src/features/quate/domain/usecases/search_quate.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_cubit.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/favorites/favorites_screen_cubit.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/search/search_screen_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -21,10 +23,12 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => QuatesCubit(
       addQuateToFavoritesUsecase: sl(),
-      removeQuateFromFavoritesUsecase: sl(),
       getFavoriteQuatesUsecase: sl(),
-      getRandomQuateUsecase: sl(),
-      searchQuateUsecase: sl()));
+      getRandomQuateUsecase: sl()));
+  sl.registerFactory(() => SearchScreenCubit(
+      searchQuateUsecase: sl(), addQuateToFavoritesUsecase: sl()));
+  sl.registerFactory(() => FavoritesScreenCubit(
+      getFavoriteQuatesUsecase: sl(), removeQuateFromFavoritesUsecase: sl()));
   // Repository
   sl.registerLazySingleton<QuateRepository>(() => QuateRepositoryImpl(
       remoteDataSource: sl(), localDataSource: sl(), networkInfo: sl()));
@@ -38,7 +42,8 @@ Future<void> init() async {
       () => RemoveQuateFromFavoritesUsecase(quateRepository: sl()));
   sl.registerLazySingleton(() => SearchQuateUsecase(quateRepository: sl()));
   // DataSources
-  sl.registerLazySingleton<LocalDataSource>(() => LocalDataSourseImpl());
+  sl.registerLazySingleton<LocalDataSource>(
+      () => LocalDataSourseImpl(sharedPreferences: sl()));
   sl.registerLazySingleton<RemoteDataSource>(
       () => RemoteDataSourceImpl(client: sl()));
 
