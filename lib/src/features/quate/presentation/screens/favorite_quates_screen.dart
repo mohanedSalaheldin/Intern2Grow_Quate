@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:quate_app/src/core/utils/app_colors.dart';
-import 'package:quate_app/src/core/widgets/error_widget.dart';
 import 'package:quate_app/src/core/widgets/loading_wodget.dart';
 import 'package:quate_app/src/core/widgets/toast.dart';
 import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
@@ -11,6 +10,7 @@ import 'package:quate_app/src/features/quate/presentation/bloc/favorites/favorit
 import 'package:quate_app/src/features/quate/presentation/screens/search_result_screen.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/favorite_card_widget.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/navigation_button.dart';
+import 'package:quate_app/src/features/quate/presentation/widgets/quate_card.dart';
 
 // ignore: must_be_immutable
 class FavoriteQuatesScreen extends StatelessWidget {
@@ -22,6 +22,7 @@ class FavoriteQuatesScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is FavoritesScreenRemoveQuateFromFavoritesSuccessState) {
           showSuccessToast('Quate Removed Successfully');
+          FavoritesScreenCubit.get(context).getFavoriteQuates();
         }
         if (state is FavoritesScreenRemoveQuateFromFavoritesErrorState) {
           showErrorToast('Remove Failed');
@@ -29,14 +30,12 @@ class FavoriteQuatesScreen extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is FavoritesScreenGetFavoriteQuatesErrorState) {
-          return MyErrorWidget(error: state.msg);
+          // return MyErrorWidget(error: state.msg);
         }
         if (state is FavoritesScreenRemoveQuateFromFavoritesErrorState) {
           return const LoadingWidget();
         }
-        if (state is FavoritesScreenRemoveQuateFromFavoritesErrorState) {
-          // return MyErrorWidget(error: state.msg);
-        }
+
         if (state is FavoritesScreenGetFavoriteQuatesLoadingState) {
           return const LoadingWidget();
         }
@@ -62,8 +61,23 @@ class FavoriteQuatesScreen extends StatelessWidget {
                   ),
                 ),
               )
-            : const MyErrorWidget(
-                error: 'Not Favorites Quates',
+            : Scaffold(
+                body: SafeArea(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [HexColor('#5D13E7'), HexColor('#8249B5')],
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                      ),
+                    ),
+                    child: _buildBody(
+                      context: context,
+                      favoriteQuates: [],
+                    ),
+                  ),
+                ),
               );
       },
     );
@@ -77,6 +91,7 @@ Widget _buildBody({required context, required List<Quate> favoriteQuates}) {
       children: [
         NavigationButton(
           onPressed: () {
+            // QuatesCubit.get(context).getFavoriteQuates();
             Navigator.pop(context);
           },
           fullyRounded: true,
@@ -135,20 +150,32 @@ Widget _buildBody({required context, required List<Quate> favoriteQuates}) {
         const SizedBox(
           height: 10.0,
         ),
-        Expanded(
-          child: ListView.separated(
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) => bulidFavQuateCard(
-              context,
-              favoriteQuates[index],
-            ),
-            separatorBuilder: (context, index) => const SizedBox(
-              height: 10.0,
-            ),
-            itemCount: favoriteQuates.length,
-          ),
-        ),
+        favoriteQuates.isEmpty
+            ? const QuateCard(
+                quateContent: 'No Favorites Yet',
+                quateAuther: '',
+                child: Text(''),
+              )
+            : Expanded(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) => bulidFavQuateCard(
+                    context,
+                    favoriteQuates[index],
+                    () {
+                      FavoritesScreenCubit.get(context)
+                          .removeQuateFromfavorite(favoriteQuates[index].id);
+                    },
+                  ),
+                  separatorBuilder: (context, index) => const SizedBox(
+                    height: 10.0,
+                  ),
+                  itemCount: FavoritesScreenCubit.get(context)
+                      .favoriteQuatesList
+                      .length,
+                ),
+              ),
         // bulidQuateCard(context),
       ],
     ),

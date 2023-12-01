@@ -6,7 +6,7 @@ import 'package:quate_app/src/core/widgets/error_widget.dart';
 import 'package:quate_app/src/core/widgets/loading_wodget.dart';
 import 'package:quate_app/src/core/widgets/toast.dart';
 import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
-import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_cubit.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/favorites/favorites_screen_cubit.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/search/search_screen_cubit.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/search/search_screen_state.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/bordered_button.dart';
@@ -27,6 +27,11 @@ class SearchResultScreen extends StatelessWidget {
         }
         if (state is SearchAddQuateToFavoritesErrorState) {
           showErrorToast('Added Failed');
+        }
+        if (state is SearchQuatesSuccessState) {
+          if (state.quates.isEmpty) {
+            showErrorToast('No Results');
+          }
         }
       },
       builder: (context, state) {
@@ -66,6 +71,7 @@ Widget _buildBody({required context, required searchQuates}) => Container(
           children: [
             NavigationButton(
               onPressed: () {
+                FavoritesScreenCubit.get(context).getFavoriteQuates();
                 Navigator.pop(context);
               },
               fullyRounded: true,

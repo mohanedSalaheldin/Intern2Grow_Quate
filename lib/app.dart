@@ -15,10 +15,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<QuatesCubit>(
-          create: (context) => di.sl<QuatesCubit>()
-            ..getRandomQuate()
-            ..getFavoriteQuates(),
-        ),
+            create: (context) => di.sl<QuatesCubit>()..getRandomQuate()),
         BlocProvider(
           create: (context) =>
               di.sl<FavoritesScreenCubit>()..getFavoriteQuates(),

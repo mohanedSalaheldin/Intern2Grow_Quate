@@ -7,6 +7,7 @@ import 'package:quate_app/src/core/widgets/toast.dart';
 import 'package:quate_app/src/features/quate/domain/entity/quate_entity.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_cubit.dart';
 import 'package:quate_app/src/features/quate/presentation/bloc/cubit/quates_state.dart';
+import 'package:quate_app/src/features/quate/presentation/bloc/favorites/favorites_screen_cubit.dart';
 import 'package:quate_app/src/features/quate/presentation/screens/favorite_quates_screen.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/bordered_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/filled_button.dart';
@@ -29,24 +30,16 @@ class HomeScreen extends StatelessWidget {
       },
       builder: (context, state) {
         Quate quate = QuatesCubit.get(context).randomQuate;
-        int numOfFavoriteQuates =
-            QuatesCubit.get(context).favoriteQuatesListLinght;
 
-        if (state is GetFavoriteQuatesLoadingState ||
-            state is GetRandomQuateLoadingState) {
-          return const LoadingWidget();
-        }
-        if (state is GetFavoriteQuatesErrorState) {
-          return MyErrorWidget(
-            error: state.msg,
-          );
-        }
         if (state is GetRandomQuateErrorState) {
           return MyErrorWidget(
             error: state.msg,
           );
         }
-        
+        if (state is GetRandomQuateLoadingState) {
+          return const LoadingWidget();
+        }
+
         return Scaffold(
           body: SafeArea(
             child: Container(
@@ -62,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                   ? _buildBody(
                       context: context,
                       quate: quate,
-                      numOfFavoriteQuates: numOfFavoriteQuates,
+                      numOfFavoriteQuates: 0,
                     )
                   : const LoadingWidget(),
             ),
@@ -94,6 +87,7 @@ Widget _buildBody(
                   ),
                   NavigationButton(
                     onPressed: () {
+                      FavoritesScreenCubit.get(context).getFavoriteQuates();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -109,14 +103,14 @@ Widget _buildBody(
                 ],
               ),
             ),
-            CircleAvatar(
-              backgroundColor: const Color.fromARGB(221, 35, 34, 36),
-              radius: 17.0,
-              child: Text(
-                '$numOfFavoriteQuates',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
+            // CircleAvatar(
+            //   backgroundColor: const Color.fromARGB(221, 35, 34, 36),
+            //   radius: 17.0,
+            //   child: Text(
+            //     '$numOfFavoriteQuates',
+            //     style: Theme.of(context).textTheme.bodySmall,
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -155,6 +149,7 @@ Widget _bottons({
         width: 5.0,
       ),
       favButton(
+        context: context,
         inFavorite: isFavorite,
         onPressed: () {
           isFavorite = !isFavorite;

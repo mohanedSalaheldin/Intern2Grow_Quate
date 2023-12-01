@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
-import 'package:quate_app/src/core/errors/exceptions.dart';
 import 'package:quate_app/src/features/quate/data/models/quate_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,8 +48,8 @@ class LocalDataSourseImpl implements LocalDataSource {
           .toList();
       return Future.value(models);
     } else {
-      throw NoFavoriteException();
-      // return [];
+      // throw NoFavoriteException();
+      return [];
     }
   }
 

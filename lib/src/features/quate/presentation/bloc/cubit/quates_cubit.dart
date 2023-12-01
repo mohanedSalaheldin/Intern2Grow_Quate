@@ -22,7 +22,7 @@ class QuatesCubit extends Cubit<QuatesState> {
   }) : super(QuatesInitial());
 
   static QuatesCubit get(context) => BlocProvider.of(context);
-
+  // bool isfavorite = false;
   Future<void> addQuateTofavorite(Quate quate) async {
     emit(AddQuateToFavoritesLoadingState());
     final Either<Failure, Unit> response =
@@ -37,28 +37,12 @@ class QuatesCubit extends Cubit<QuatesState> {
             msg: SuccessMessages.addToFavoriteSuccessMessage)),
       },
     );
-    await getFavoriteQuates();
   }
 
-  int favoriteQuatesListLinght = 0;
-  Future<void> getFavoriteQuates() async {
-    emit(GetFavoriteQuatesLoadingState());
-    final Either<Failure, List<Quate>> response =
-        await getFavoriteQuatesUsecase();
-    response.fold(
-      (failure) => {
-        emit(GetFavoriteQuatesErrorState(
-            msg: ErrorMessages.getFavoriteErrorMessage)),
-      },
-      (quates) => {
-        favoriteQuatesListLinght = quates.length,
-        emit(GetFavoriteQuatesSuccessState(favoriteQuates: quates)),
-      },
-    );
-  }
+  
+  
 
-  Quate randomQuate =
-      const Quate(id: '', content: '', author: '');
+  Quate randomQuate = const Quate(id: '', content: '', author: '');
   Future<void> getRandomQuate() async {
     emit(GetRandomQuateLoadingState());
     final Either<Failure, Quate> response = await getRandomQuateUsecase();

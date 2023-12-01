@@ -31,7 +31,6 @@ class FavoritesScreenCubit extends Cubit<FavoritesScreenState> {
             msg: SuccessMessages.removeFromFavoriteSuccessMessage)),
       },
     );
-    await getFavoriteQuates();
   }
 
   List<Quate> favoriteQuatesList = [];
@@ -47,7 +46,8 @@ class FavoritesScreenCubit extends Cubit<FavoritesScreenState> {
       (quates) => {
         favoriteQuatesList = quates,
         emit(FavoritesScreenGetFavoriteQuatesSuccessState(
-            favoriteQuates: quates)),
+          favoriteQuates: quates,
+        )),
       },
     );
   }
