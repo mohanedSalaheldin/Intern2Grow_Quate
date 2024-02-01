@@ -39,7 +39,6 @@ class HomeScreen extends StatelessWidget {
         if (state is GetRandomQuateLoadingState) {
           return const LoadingWidget();
         }
-
         return Scaffold(
           body: SafeArea(
             child: Container(
@@ -53,10 +52,7 @@ class HomeScreen extends StatelessWidget {
               ),
               child: quate.id != ''
                   ? _buildBody(
-                      context: context,
-                      quate: quate,
-                      numOfFavoriteQuates: 0,
-                    )
+                      context: context, quate: quate, numOfFavoriteQuates: 0)
                   : const LoadingWidget(),
             ),
           ),
@@ -103,14 +99,6 @@ Widget _buildBody(
                 ],
               ),
             ),
-            // CircleAvatar(
-            //   backgroundColor: const Color.fromARGB(221, 35, 34, 36),
-            //   radius: 17.0,
-            //   child: Text(
-            //     '$numOfFavoriteQuates',
-            //     style: Theme.of(context).textTheme.bodySmall,
-            //   ),
-            // ),
           ],
         ),
       ),
