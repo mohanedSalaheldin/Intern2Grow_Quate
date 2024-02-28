@@ -10,7 +10,7 @@ This is a quote generation application built using the Flutter framework and the
 
 ## Demo
 
-A live demo of the application can be accessed [here](https://www.mediafire.com/file/r41u248nj7g1yka/app-release.apk/file).
+A live demo of the application can be accessed [**Download APK release🔻**](https://www.mediafire.com/file/r41u248nj7g1yka/app-release.apk/file).
 
 ## Getting Started
 
