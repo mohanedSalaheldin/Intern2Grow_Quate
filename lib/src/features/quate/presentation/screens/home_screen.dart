@@ -13,6 +13,7 @@ import 'package:quate_app/src/features/quate/presentation/widgets/bordered_butto
 import 'package:quate_app/src/features/quate/presentation/widgets/filled_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/navigation_button.dart';
 import 'package:quate_app/src/features/quate/presentation/widgets/quate_card.dart';
+import 'package:quate_app/src/features/quate/presentation/widgets/share_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -129,7 +130,7 @@ Widget _bottons({
           QuatesCubit.get(context).getRandomQuate();
         },
         child: Text(
-          'Generate Another Quote',
+          'Generate Quote',
           style: Theme.of(context).textTheme.bodySmall,
         ),
       ),
@@ -143,6 +144,9 @@ Widget _bottons({
           isFavorite = !isFavorite;
           QuatesCubit.get(context).addQuateTofavorite(quate);
         },
+      ),
+      ShareQuateButton(
+        quate: '"${quate.content}" by ${quate.author}',
       ),
     ],
   );
