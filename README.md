@@ -9,7 +9,8 @@ This is a quote generation application built using the Flutter framework and the
 - **Clean Architecture:** Follows clean architecture principles for better code organization and maintainability.
 
 ## Screenshots
-![05_tasks](https://github.com/user-attachments/assets/b35df6a1-d20e-476b-8519-0609daf5d330)
+![04_quotes](https://github.com/user-attachments/assets/c878a917-2a2d-4a56-916a-38a6285a5543)
+
 
 
 ## Demo
